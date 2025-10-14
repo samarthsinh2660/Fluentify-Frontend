@@ -8,14 +8,33 @@ const Dashboard = () => {
   const [courses, setCourses] = useState([]);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState('');
+  const [showGenerateForm, setShowGenerateForm] = useState(false);
+  const [generateForm, setGenerateForm] = useState({ language: '', expectedDuration: '' });
+
+  const languages = [
+    { code: "ES", name: "Spanish" },
+    { code: "FR", name: "French" },
+    { code: "JP", name: "Japanese" },
+    { code: "DE", name: "German" },
+    { code: "IT", name: "Italian" },
+    { code: "IN", name: "Hindi" },
+  ];
+
+  const durations = [
+    "1 month",
+    "3 months",
+    "6 months",
+    "1 year",
+    "More than 1 year",
+  ];
 
   const handleLogout = () => {
     localStorage.removeItem('jwt');
     navigate('/login');
   };
 
-  // Check if user has preferences
-  const checkUserPreferences = async () => {
+  // Check if user has preferences and return them
+  const getUserPreferences = async () => {
     try {
       const token = localStorage.getItem('jwt');
       const response = await fetch('http://localhost:5000/api/preferences/learner', {
@@ -26,22 +45,19 @@ const Dashboard = () => {
       const data = await response.json();
       
       if (response.status === 200 && data.success) {
-        return data.data && data.data.length > 0;
+        return data.data;
       }
-      return false;
+      return null;
     } catch (error) {
       console.error('Error checking preferences:', error);
-      return false;
+      return null;
     }
   };
 
   // Generate a new course
   const generateCourse = async () => {
-    const hasPreferences = await checkUserPreferences();
-    
-    if (!hasPreferences) {
-      setError('Please set your language preferences first');
-      navigate('/preferences');
+    if (!generateForm.language || !generateForm.expectedDuration) {
+      setError('Please select both language and duration');
       return;
     }
 
@@ -57,8 +73,8 @@ const Dashboard = () => {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          language: 'Spanish', // This should come from user preferences
-          expectedDuration: '3 months'
+          language: generateForm.language,
+          expectedDuration: generateForm.expectedDuration
         })
       });
 
@@ -66,6 +82,8 @@ const Dashboard = () => {
         const data = await response.json();
         if (data.success) {
           setCourses(prev => [data.data, ...prev]);
+          setShowGenerateForm(false);
+          setGenerateForm({ language: '', expectedDuration: '' });
         } else {
           setError(data.error?.message || data.message || 'Failed to generate course');
         }
@@ -137,7 +155,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold">Your Courses</h3>
             <button
-              onClick={generateCourse}
+              onClick={() => setShowGenerateForm(true)}
               disabled={generating}
               className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -149,6 +167,56 @@ const Dashboard = () => {
           {error && (
             <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
               {error}
+            </div>
+          )}
+
+          {showGenerateForm && (
+            <div className="mb-6 p-6 bg-white rounded-lg shadow-sm border border-gray-200">
+              <h4 className="text-lg font-semibold mb-4">Generate New Course</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                  <select
+                    value={generateForm.language}
+                    onChange={(e) => setGenerateForm({ ...generateForm, language: e.target.value })}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select Language</option>
+                    {languages.map((lang) => (
+                      <option key={lang.code} value={lang.name}>{lang.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+                  <select
+                    value={generateForm.expectedDuration}
+                    onChange={(e) => setGenerateForm({ ...generateForm, expectedDuration: e.target.value })}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select Duration</option>
+                    {durations.map((dur) => (
+                      <option key={dur} value={dur}>{dur}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={generateCourse}
+                  disabled={generating}
+                  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  {generating ? 'Generating...' : 'Generate Course'}
+                </button>
+                <button
+                  onClick={() => { setShowGenerateForm(false); setGenerateForm({ language: '', expectedDuration: '' }); setError(''); }}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           )}
 
@@ -178,12 +246,12 @@ const Dashboard = () => {
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Progress</span>
-                      <span className="font-medium">{course.progress_percentage || 0}%</span>
+                      <span className="font-medium">{course.progress?.progressPercentage || 0}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
                         className="bg-blue-600 h-2 rounded-full" 
-                        style={{ width: `${course.progress_percentage || 0}%` }}
+                        style={{ width: `${course.progress?.progressPercentage || 0}%` }}
                       ></div>
                     </div>
                   </div>
@@ -203,7 +271,7 @@ const Dashboard = () => {
                     onClick={() => navigate(`/course/${course.id}`)}
                     className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    {course.progress_percentage > 0 ? 'Continue Learning' : 'Start Course'}
+                    {(course.progress?.progressPercentage || 0) > 0 ? 'Continue Learning' : 'Start Course'}
                   </button>
                 </div>
               ))}

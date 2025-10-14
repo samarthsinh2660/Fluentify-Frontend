@@ -28,8 +28,8 @@ const LessonPage = () => {
       const data = await response.json();
 
       if (response.status === 200 && data.success) {
-        setLesson(data.data);
-        setExercises(data.data.exercises || []);
+        setLesson(data.data.lesson);
+        setExercises(data.data.lesson.exercises || []);
       } else {
         const errorMessage = data.error?.message || data.message || 'Failed to fetch lesson details';
         setError(typeof errorMessage === 'string' ? errorMessage : 'Failed to fetch lesson details');
@@ -58,6 +58,7 @@ const LessonPage = () => {
         setExercises(prev => [...prev, ...(data.data || [])]);
       } else {
         console.error('Error generating exercises:', data.error?.message || data.message);
+        // Optionally show user error, but for now just log
       }
     } catch (error) {
       console.error('Error generating exercises:', error);

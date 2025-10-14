@@ -27,7 +27,7 @@ const CoursePage = () => {
 
       if (response.status === 200 && data.success) {
         setCourse(data.data.course);
-        setUnits(data.data.units || []);
+        setUnits(data.data.course.units || []);
       } else {
         const errorMessage = data.error?.message || data.message || 'Failed to fetch course details';
         setError(typeof errorMessage === 'string' ? errorMessage : 'Failed to fetch course details');
@@ -146,12 +146,12 @@ const CoursePage = () => {
           <div className="mt-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-700">Course Progress</span>
-              <span className="text-sm font-medium text-gray-700">{course.progress_percentage || 0}%</span>
+              <span className="text-sm font-medium text-gray-700">{course.progress?.progressPercentage || 0}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div 
                 className="bg-blue-600 h-3 rounded-full transition-all duration-300" 
-                style={{ width: `${course.progress_percentage || 0}%` }}
+                style={{ width: `${course.progress?.progressPercentage || 0}%` }}
               ></div>
             </div>
           </div>
