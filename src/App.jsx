@@ -103,7 +103,7 @@ function App() {
           <CoursePage />
         </ProtectedRoute>
       } />
-      <Route path="/lesson/:courseId/:lessonId" element={
+      <Route path="/lesson/:courseId/:unitId/:lessonId" element={
         <ProtectedRoute role="learner">
           <LessonPage />
         </ProtectedRoute>

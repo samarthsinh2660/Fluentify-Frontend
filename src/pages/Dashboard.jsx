@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, BookOpen, Target, Clock, CheckCircle, Lock } from 'lucide-react';
+import { LogOut, BookOpen, Target, Clock, CheckCircle, Lock, Flame } from 'lucide-react';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -258,17 +258,17 @@ const Dashboard = () => {
                   
                   <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
                     <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      <span>{course.total_units || 0} units</span>
+                      <Flame className="w-4 h-4 text-orange-500" />
+                      <span>{course.progress?.currentStreak || 0} day streak</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <BookOpen className="w-4 h-4" />
-                      <span>{course.total_lessons || 0} lessons</span>
+                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <span>{course.progress?.unitsCompleted || 0} units done</span>
                     </div>
                   </div>
                   
                   <button
-                    onClick={() => navigate(`/course/${course.id}`)}
+                    onClick={() => navigate(`/course/${course.id}`, { state: { progress: course.progress } })}
                     className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     {(course.progress?.progressPercentage || 0) > 0 ? 'Continue Learning' : 'Start Course'}

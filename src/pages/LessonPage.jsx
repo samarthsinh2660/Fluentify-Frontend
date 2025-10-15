@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Target, CheckCircle, Play, RotateCcw, Award } from 'lucide-react';
 
 const LessonPage = () => {
-  const { courseId, lessonId } = useParams();
+  const { courseId, unitId, lessonId } = useParams();
   const navigate = useNavigate();
   const [lesson, setLesson] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -11,31 +11,44 @@ const LessonPage = () => {
   const [currentSection, setCurrentSection] = useState('vocabulary');
   const [exercises, setExercises] = useState([]);
   const [generatingExercises, setGeneratingExercises] = useState(false);
+  const [lessonProgress, setLessonProgress] = useState(null);
+
+  // Helper function to check if lesson is truly completed
+  const isLessonCompleted = () => {
+    return lessonProgress?.is_completed === true;
+  };
 
   useEffect(() => {
     fetchLessonDetails();
-  }, [lessonId]);
+  }, [lessonId, unitId]);
 
   const fetchLessonDetails = async () => {
+    console.log(`LessonPage: Fetching lesson details for course ${courseId}, unit ${unitId}, lesson ${lessonId}`);
     setLoading(true);
     try {
       const token = localStorage.getItem('jwt');
-      const response = await fetch(`http://localhost:5000/api/courses/${courseId}/lessons/${lessonId}`, {
+      // Use unit-aware endpoint
+      const response = await fetch(`http://localhost:5000/api/courses/${courseId}/units/${unitId}/lessons/${lessonId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
+      console.log(`LessonPage: API response status: ${response.status}`);
       const data = await response.json();
+      console.log('LessonPage: API response data:', data);
 
       if (response.status === 200 && data.success) {
+        console.log('LessonPage: Successfully loaded lesson:', data.data.lesson.title);
         setLesson(data.data.lesson);
         setExercises(data.data.lesson.exercises || []);
+        setLessonProgress(data.data.progress || null);
       } else {
         const errorMessage = data.error?.message || data.message || 'Failed to fetch lesson details';
+        console.error('LessonPage: Error loading lesson:', errorMessage);
         setError(typeof errorMessage === 'string' ? errorMessage : 'Failed to fetch lesson details');
       }
     } catch (error) {
-      console.error('Error fetching lesson details:', error);
+      console.error('LessonPage: Error fetching lesson details:', error);
       setError('Failed to fetch lesson details');
     } finally {
       setLoading(false);
@@ -46,7 +59,7 @@ const LessonPage = () => {
     setGeneratingExercises(true);
     try {
       const token = localStorage.getItem('jwt');
-      const response = await fetch(`http://localhost:5000/api/courses/${courseId}/lessons/${lessonId}/exercises`, {
+      const response = await fetch(`http://localhost:5000/api/courses/${courseId}/units/${unitId}/lessons/${lessonId}/exercises`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -70,11 +83,14 @@ const LessonPage = () => {
   const markLessonComplete = async () => {
     try {
       const token = localStorage.getItem('jwt');
-      const response = await fetch(`http://localhost:5000/api/courses/${courseId}/lessons/${lessonId}/complete`, {
+      // Use progress API endpoint for completion
+      const response = await fetch(`http://localhost:5000/api/progress/courses/${courseId}/units/${unitId}/lessons/${lessonId}/complete`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ score: 100, exercises: [] })
       });
       const data = await response.json();
 
@@ -83,6 +99,10 @@ const LessonPage = () => {
         fetchLessonDetails();
       } else {
         console.error('Error marking lesson complete:', data.error?.message || data.message);
+        // Even if there's an error like "already completed", refresh the data
+        if (data.error?.message === "Lesson already completed") {
+          fetchLessonDetails();
+        }
       }
     } catch (error) {
       console.error('Error marking lesson complete:', error);
@@ -127,7 +147,7 @@ const LessonPage = () => {
               Back
             </button>
             <h1 className="text-2xl font-bold text-gray-900">{lesson.title}</h1>
-            {lesson.completed && (
+            {isLessonCompleted() && (
               <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-sm">
                 <CheckCircle className="w-4 h-4" />
                 Completed
@@ -135,7 +155,7 @@ const LessonPage = () => {
             )}
           </div>
           
-          {!lesson.completed && (
+          {!isLessonCompleted() && (
             <button
               onClick={markLessonComplete}
               className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
@@ -152,18 +172,36 @@ const LessonPage = () => {
         {/* Lesson Overview */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
           <p className="text-gray-700 mb-4">{lesson.description}</p>
+          
+          {isLessonCompleted() && (
+            <div className="flex items-center gap-4 mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center gap-2 text-green-700">
+                <Award className="w-5 h-5" />
+                <span className="font-medium">Score: {lessonProgress.score}%</span>
+              </div>
+              <div className="flex items-center gap-2 text-green-700">
+                <Target className="w-5 h-5" />
+                <span className="font-medium">XP Earned: +{lessonProgress.xp_earned}</span>
+              </div>
+            </div>
+          )}
+          
           <div className="flex items-center gap-6 text-sm text-gray-600">
             <div className="flex items-center gap-1">
               <BookOpen className="w-4 h-4" />
-              <span>{lesson.vocabulary_count || 0} vocabulary items</span>
+              <span>{lesson.vocabulary?.length || 0} vocabulary items</span>
             </div>
             <div className="flex items-center gap-1">
               <Target className="w-4 h-4" />
-              <span>{lesson.grammar_points_count || 0} grammar points</span>
+              <span>{lesson.grammarPoints?.length || 0} grammar points</span>
             </div>
             <div className="flex items-center gap-1">
               <Play className="w-4 h-4" />
               <span>{exercises.length} exercises</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Award className="w-4 h-4" />
+              <span>{lesson.xpReward || 0} XP</span>
             </div>
           </div>
         </div>
