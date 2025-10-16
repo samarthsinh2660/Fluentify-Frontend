@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import Signup from './pages/Signup';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import AdminDashboard from './pages/AdminDashboard';
-import LearnerPreferences from './pages/LearnerPreferences';
-import CoursePage from './pages/CoursePage';
-import LessonPage from './pages/LessonPage';
-import { getLearnerPreferences } from './routes/preferences';
+import { Login, Signup } from '../modules/auth';
+import { Dashboard, LearnerPreferences, CoursePage, LessonPage } from '../modules/learner';
+import { AdminDashboard } from '../modules/admin';
 import './App.css';
 
 function ProtectedRoute({ children, role }) {

@@ -1,120 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Target, CheckCircle, Play, RotateCcw, Award } from 'lucide-react';
+import { BookOpen, Target, Play, RotateCcw, Award } from 'lucide-react';
+import { useLessonDetails, useGenerateExercises, useCompleteLesson } from '../../hooks/useCourses';
+import { LoadingSpinner, PageHeader, Button } from '../../components';
 
 const LessonPage = () => {
   const { courseId, unitId, lessonId } = useParams();
   const navigate = useNavigate();
-  const [lesson, setLesson] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [currentSection, setCurrentSection] = useState('vocabulary');
-  const [exercises, setExercises] = useState([]);
-  const [generatingExercises, setGeneratingExercises] = useState(false);
-  const [lessonProgress, setLessonProgress] = useState(null);
+  
+  // React Query hooks
+  const { data, isLoading: loading, error: queryError } = useLessonDetails({
+    courseId: Number(courseId),
+    unitId: Number(unitId),
+    lessonId: Number(lessonId)
+  });
+  
+  const generateExercisesMutation = useGenerateExercises();
+  const completeLessonMutation = useCompleteLesson();
+  
+  // Extract data
+  const lesson = data?.data?.lesson;
+  const lessonProgress = data?.data?.progress;
+  const exercises = lesson?.exercises || [];
+  const error = queryError?.message;
 
   // Helper function to check if lesson is truly completed
   const isLessonCompleted = () => {
     return lessonProgress?.is_completed === true;
   };
 
-  useEffect(() => {
-    fetchLessonDetails();
-  }, [lessonId, unitId]);
-
-  const fetchLessonDetails = async () => {
-    console.log(`LessonPage: Fetching lesson details for course ${courseId}, unit ${unitId}, lesson ${lessonId}`);
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('jwt');
-      // Use unit-aware endpoint
-      const response = await fetch(`http://localhost:5000/api/courses/${courseId}/units/${unitId}/lessons/${lessonId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      console.log(`LessonPage: API response status: ${response.status}`);
-      const data = await response.json();
-      console.log('LessonPage: API response data:', data);
-
-      if (response.status === 200 && data.success) {
-        console.log('LessonPage: Successfully loaded lesson:', data.data.lesson.title);
-        setLesson(data.data.lesson);
-        setExercises(data.data.lesson.exercises || []);
-        setLessonProgress(data.data.progress || null);
-      } else {
-        const errorMessage = data.error?.message || data.message || 'Failed to fetch lesson details';
-        console.error('LessonPage: Error loading lesson:', errorMessage);
-        setError(typeof errorMessage === 'string' ? errorMessage : 'Failed to fetch lesson details');
-      }
-    } catch (error) {
-      console.error('LessonPage: Error fetching lesson details:', error);
-      setError('Failed to fetch lesson details');
-    } finally {
-      setLoading(false);
-    }
+  const generateAdditionalExercises = () => {
+    generateExercisesMutation.mutate({
+      courseId: Number(courseId),
+      unitId: Number(unitId),
+      lessonId: Number(lessonId)
+    });
   };
 
-  const generateAdditionalExercises = async () => {
-    setGeneratingExercises(true);
-    try {
-      const token = localStorage.getItem('jwt');
-      const response = await fetch(`http://localhost:5000/api/courses/${courseId}/units/${unitId}/lessons/${lessonId}/exercises`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-
-      if (response.status === 200 && data.success) {
-        setExercises(prev => [...prev, ...(data.data || [])]);
-      } else {
-        console.error('Error generating exercises:', data.error?.message || data.message);
-        // Optionally show user error, but for now just log
-      }
-    } catch (error) {
-      console.error('Error generating exercises:', error);
-    } finally {
-      setGeneratingExercises(false);
-    }
-  };
-
-  const markLessonComplete = async () => {
-    try {
-      const token = localStorage.getItem('jwt');
-      // Use progress API endpoint for completion
-      const response = await fetch(`http://localhost:5000/api/progress/courses/${courseId}/units/${unitId}/lessons/${lessonId}/complete`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ score: 100, exercises: [] })
-      });
-      const data = await response.json();
-
-      if (response.status === 200 && data.success) {
-        // Refresh lesson data to show completion status
-        fetchLessonDetails();
-      } else {
-        console.error('Error marking lesson complete:', data.error?.message || data.message);
-        // Even if there's an error like "already completed", refresh the data
-        if (data.error?.message === "Lesson already completed") {
-          fetchLessonDetails();
-        }
-      }
-    } catch (error) {
-      console.error('Error marking lesson complete:', error);
-    }
+  const markLessonComplete = () => {
+    completeLessonMutation.mutate({
+      courseId: Number(courseId),
+      unitId: Number(unitId),
+      lessonId: Number(lessonId),
+      score: 100,
+      exercises: []
+    });
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-green-50 flex items-center justify-center">
-        <p>Loading lesson...</p>
-      </div>
-    );
+    return <LoadingSpinner fullScreen text="Loading lesson..." />;
   }
 
   if (error || !lesson) {
@@ -122,12 +57,9 @@ const LessonPage = () => {
       <div className="min-h-screen bg-green-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error || 'Lesson not found'}</p>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-          >
+          <Button onClick={() => navigate('/dashboard')}>
             Back to Dashboard
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -136,35 +68,31 @@ const LessonPage = () => {
   return (
     <div className="min-h-screen bg-green-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="text-2xl font-bold text-gray-900">{lesson.title}</h1>
+      <PageHeader
+        title={
+          <div className="flex items-center gap-2">
+            <span>{lesson.title}</span>
             {isLessonCompleted() && (
-              <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-sm">
-                <CheckCircle className="w-4 h-4" />
-                Completed
-              </div>
+              <span className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-sm font-normal">
+                ✓ Completed
+              </span>
             )}
           </div>
-          
-          {!isLessonCompleted() && (
-            <button
+        }
+        showBack
+        actions={
+          !isLessonCompleted() && (
+            <Button
               onClick={markLessonComplete}
-              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+              loading={completeLessonMutation.isPending}
+              variant="success"
+              icon={<Award className="w-4 h-4" />}
             >
-              <Award className="w-4 h-4" />
               Mark Complete
-            </button>
-          )}
-        </div>
-      </header>
+            </Button>
+          )
+        }
+      />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -192,7 +120,7 @@ const LessonPage = () => {
             </div>
             <div className="flex items-center gap-1">
               <Target className="w-4 h-4" />
-              <span>{lesson.grammarPoints?.length || 0} grammar points</span>
+              <span>{lesson.grammar_points?.length || 0} grammar points</span>
             </div>
             <div className="flex items-center gap-1">
               <Play className="w-4 h-4" />
@@ -279,14 +207,14 @@ const LessonPage = () => {
               <div className="space-y-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold">Exercises</h3>
-                  <button
+                  <Button
                     onClick={generateAdditionalExercises}
-                    disabled={generatingExercises}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                    loading={generateExercisesMutation.isPending}
+                    size="sm"
+                    icon={<RotateCcw className="w-4 h-4" />}
                   >
-                    <RotateCcw className="w-4 h-4" />
-                    {generatingExercises ? 'Generating...' : 'Generate More'}
-                  </button>
+                    Generate More
+                  </Button>
                 </div>
                 
                 {exercises.length > 0 ? (
