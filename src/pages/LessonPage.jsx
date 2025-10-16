@@ -144,7 +144,6 @@ const LessonPage = () => {
               className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
             >
               <ArrowLeft className="w-5 h-5" />
-              Back
             </button>
             <h1 className="text-2xl font-bold text-gray-900">{lesson.title}</h1>
             {isLessonCompleted() && (
