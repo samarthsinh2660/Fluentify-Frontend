@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, BookOpen } from 'lucide-react';
+import { LogOut, BookOpen, MessageCircle } from 'lucide-react';
 import { useCourses } from '../../hooks/useCourses';
 import { useLogout } from '../../hooks/useAuth';
 import { useStreaming } from '../../contexts/StreamingContext';
-import { Button, SkeletonCourseCard } from '../../components';
+import { Button, SkeletonCourseCard, VoiceAIModal } from '../../components';
 import { CourseCard, CourseGenerationForm, GeneratingCourseCard } from './components';
 
 const Dashboard = () => {
@@ -21,6 +21,7 @@ const Dashboard = () => {
   const [error, setError] = useState('');
   const [showGenerateForm, setShowGenerateForm] = useState(false);
   const [generateForm, setGenerateForm] = useState({ language: '', expectedDuration: '', expertise: '' });
+  const [showVoiceAI, setShowVoiceAI] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -81,14 +82,23 @@ const Dashboard = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold">Your Courses</h3>
-            <Button
-              onClick={() => setShowGenerateForm(true)}
-              loading={streamState.isGenerating}
-              disabled={streamState.isGenerating}
-              icon={<BookOpen className="w-4 h-4" />}
-            >
-              Generate New Course
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => setShowVoiceAI(true)}
+                variant="outline"
+                icon={<MessageCircle className="w-4 h-4" />}
+              >
+                Talk with AI
+              </Button>
+              <Button
+                onClick={() => setShowGenerateForm(true)}
+                loading={streamState.isGenerating}
+                disabled={streamState.isGenerating}
+                icon={<BookOpen className="w-4 h-4" />}
+              >
+                Generate New Course
+              </Button>
+            </div>
           </div>
 
           {showGenerateForm && (
@@ -139,6 +149,12 @@ const Dashboard = () => {
           )}
         </div>
       </main>
+
+      {/* Voice AI Modal */}
+      <VoiceAIModal 
+        isOpen={showVoiceAI} 
+        onClose={() => setShowVoiceAI(false)} 
+      />
     </div>
   );
 };
