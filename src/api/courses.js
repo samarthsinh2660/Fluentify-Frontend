@@ -99,3 +99,17 @@ export const completeLesson = async ({ courseId, unitId, lessonId, score = 100, 
   
   return handleResponse(response);
 };
+
+/**
+ * Delete a course
+ * @param {number} courseId - Course ID to delete
+ * @returns {Promise<{success: boolean, data: Object}>}
+ */
+export const deleteCourse = async (courseId) => {
+  const response = await fetch(`${API_BASE_URL}/api/courses/${courseId}`, {
+    method: 'DELETE',
+    headers: getAuthHeader(),
+  });
+  
+  return handleResponse(response);
+};
