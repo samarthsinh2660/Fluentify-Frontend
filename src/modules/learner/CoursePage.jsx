@@ -36,11 +36,18 @@ const CoursePage = () => {
   if (isGenerating && streamState.units) {
     units = streamState.units.map((streamUnit, index) => {
       if (streamUnit) {
-        // Use stream unit data
+        // Use stream unit data but ensure first lesson of unit 1 is unlocked
+        const isUnit1 = index === 0; // Unit 1 (0-indexed)
+        const lessons = streamUnit.lessons?.map((lesson, lessonIndex) => ({
+          ...lesson,
+          isUnlocked: isUnit1 && lessonIndex === 0 ? true : lesson.isUnlocked || false
+        })) || [];
+
         return {
           ...streamUnit,
           isUnlocked: true, // Generated units are unlocked
-          isGenerating: false
+          isGenerating: false,
+          lessons
         };
       } else if (streamState.currentGenerating === index + 1) {
         // Currently generating
