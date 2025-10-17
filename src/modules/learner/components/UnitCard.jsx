@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle, Play, Lock } from 'lucide-react';
+import { CheckCircle, Play, Lock, Loader } from 'lucide-react';
 import LessonCard from './LessonCard';
 
 /**
@@ -11,17 +11,23 @@ import LessonCard from './LessonCard';
  * @param {Function} props.onUnitClick - Unit click handler (for locked units)
  */
 const UnitCard = ({ unit, unitIndex, onLessonClick, onUnitClick }) => {
+  const isGenerating = unit.isGenerating || false;
+  const borderColor = isGenerating ? 'border-blue-400' : 'border-gray-200';
+  const opacity = !unit.isUnlocked && !isGenerating ? 'opacity-60' : '';
+  
   return (
     <div 
-      className={`bg-white rounded-lg shadow-sm border border-gray-200 ${!unit.isUnlocked ? 'opacity-60' : ''}`}
-      onClick={() => !unit.isUnlocked && onUnitClick(unit)}
+      className={`bg-white rounded-lg shadow-sm border-2 ${borderColor} ${opacity} ${isGenerating ? 'animate-pulse' : ''}`}
+      onClick={() => !unit.isUnlocked && !isGenerating && onUnitClick(unit)}
     >
       {/* Unit Header */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              {unit.isCompleted ? (
+              {isGenerating ? (
+                <Loader className="w-5 h-5 text-blue-600 animate-spin" />
+              ) : unit.isCompleted ? (
                 <CheckCircle className="w-5 h-5 text-green-600" />
               ) : unit.isUnlocked ? (
                 <Play className="w-5 h-5 text-blue-600" />
@@ -29,9 +35,15 @@ const UnitCard = ({ unit, unitIndex, onLessonClick, onUnitClick }) => {
                 <Lock className="w-5 h-5 text-gray-400" />
               )}
               <h3 className="text-lg font-semibold">{unit.title}</h3>
-              {!unit.isUnlocked && (
+              {isGenerating && (
+                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded flex items-center gap-1 animate-pulse">
+                  <Loader className="w-3 h-3 animate-spin" />
+                  Generating...
+                </span>
+              )}
+              {!unit.isUnlocked && !isGenerating && (
                 <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">
-                  🔒 Locked
+                  💤 Waiting
                 </span>
               )}
               {unit.isCompleted && (

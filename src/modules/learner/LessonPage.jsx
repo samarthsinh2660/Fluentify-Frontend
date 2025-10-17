@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { BookOpen, Target, Play, RotateCcw, Award } from 'lucide-react';
 import { useLessonDetails, useGenerateExercises, useCompleteLesson } from '../../hooks/useCourses';
-import { LoadingSpinner, PageHeader, Button } from '../../components';
+import { PageHeader, Button, SkeletonPageHeader, SkeletonCard, SkeletonText } from '../../components';
 
 const LessonPage = () => {
   const { courseId, unitId, lessonId } = useParams();
@@ -49,7 +49,46 @@ const LessonPage = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner fullScreen text="Loading lesson..." />;
+    return (
+      <div className="min-h-screen bg-green-50">
+        <SkeletonPageHeader />
+        <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+          {/* Lesson overview skeleton */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <div className="space-y-4">
+              <SkeletonText lines={2} />
+              <div className="flex gap-6 pt-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
+                    <div className="w-20 h-4 bg-gray-200 rounded animate-pulse" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          {/* Content skeleton */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+            {/* Tabs skeleton */}
+            <div className="border-b border-gray-200 px-6 py-4">
+              <div className="flex gap-8">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="w-24 h-4 bg-gray-200 rounded animate-pulse" />
+                ))}
+              </div>
+            </div>
+            
+            {/* Content cards skeleton */}
+            <div className="p-6 space-y-4">
+              {[1, 2, 3].map((i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   if (error || !lesson) {

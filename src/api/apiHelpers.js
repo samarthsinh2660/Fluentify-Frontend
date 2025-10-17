@@ -36,3 +36,14 @@ export const getAuthHeader = () => {
     'Content-Type': 'application/json'
   };
 };
+
+/**
+ * Get URL with JWT token as query parameter (for SSE/EventSource)
+ * @param {string} baseUrl - Base URL without token
+ * @returns {string} - URL with token as query parameter
+ */
+export const getAuthUrl = (baseUrl) => {
+  const token = localStorage.getItem('jwt');
+  const separator = baseUrl.includes('?') ? '&' : '?';
+  return `${baseUrl}${separator}token=${token}`;
+};

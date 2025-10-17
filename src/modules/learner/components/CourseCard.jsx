@@ -1,5 +1,5 @@
 import React from 'react';
-import { Target, Flame, CheckCircle } from 'lucide-react';
+import { BookOpen, Flame, CheckCircle } from 'lucide-react';
 
 /**
  * Course Card Component
@@ -19,7 +19,7 @@ const CourseCard = ({ course, onClick }) => {
           <p className="text-sm text-gray-600">{course.language}</p>
         </div>
         <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-          <Target className="w-5 h-5 text-blue-600" />
+          <BookOpen className="w-5 h-5 text-blue-600" />
         </div>
       </div>
       

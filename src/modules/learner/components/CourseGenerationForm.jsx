@@ -3,12 +3,12 @@ import { BookOpen } from 'lucide-react';
 import CustomDropdown from './CustomDropdown';
 import Button from '../../../components/Button';
 import ErrorMessage from '../../../components/ErrorMessage';
-import { LANGUAGES, DURATIONS } from '../../../utils/constants';
+import { LANGUAGES, DURATIONS, EXPERTISE_LEVELS } from '../../../utils/constants';
 
 /**
  * Course Generation Form Component
  * @param {Object} props
- * @param {Object} props.form - Form state { language, expectedDuration }
+ * @param {Object} props.form - Form state { language, expectedDuration, expertise }
  * @param {Function} props.setForm - Form state setter
  * @param {Function} props.onGenerate - Generate handler
  * @param {Function} props.onCancel - Cancel handler
@@ -27,7 +27,7 @@ const CourseGenerationForm = ({
     <div className="mb-6 p-6 bg-white rounded-lg shadow-sm border border-gray-200">
       <h4 className="text-lg font-semibold mb-4">Generate New Course</h4>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Language
@@ -50,6 +50,18 @@ const CourseGenerationForm = ({
             value={form.expectedDuration}
             onChange={(val) => setForm({ ...form, expectedDuration: val })}
             placeholder="Select Duration"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Current Level
+          </label>
+          <CustomDropdown
+            options={EXPERTISE_LEVELS}
+            value={form.expertise}
+            onChange={(val) => setForm({ ...form, expertise: val })}
+            placeholder="Select Level"
           />
         </div>
       </div>

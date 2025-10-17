@@ -52,7 +52,7 @@ const Signup = () => {
         onSuccess: (data) => {
           // Navigate based on role
           if (form.role === 'learner') {
-            navigate('/preferences');
+            navigate('/dashboard');
           } else {
             navigate('/admin-dashboard');
           }

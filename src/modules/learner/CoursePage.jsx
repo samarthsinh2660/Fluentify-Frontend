@@ -2,8 +2,9 @@ import React, { useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { BookOpen, Target, Award, Flame } from 'lucide-react';
 import { useCourseDetails } from '../../hooks/useCourses';
+import { useStreaming } from '../../contexts/StreamingContext';
 import { calculateProgress, calculateTotalXP } from '../../utils/courseHelpers';
-import { LoadingSpinner, PageHeader } from '../../components';
+import { PageHeader, SkeletonPageHeader, SkeletonCard, SkeletonUnitCard } from '../../components';
 import { StatCard, UnitCard } from './components';
 
 const CoursePage = () => {
@@ -12,6 +13,12 @@ const CoursePage = () => {
   
   // React Query hook for course details
   const { data, isLoading: loading, error: queryError, refetch } = useCourseDetails(courseId);
+  
+  // Streaming context for real-time generation
+  const { state: streamState } = useStreaming();
+  
+  // Check if this course is currently being generated
+  const isGenerating = streamState.isGenerating && streamState.courseId === Number(courseId);
   
   // Refetch data when component mounts (navigating back from lesson page)
   useEffect(() => {
@@ -23,7 +30,41 @@ const CoursePage = () => {
   // Extract data from query response
   const course = data?.data?.course;
   const stats = data?.data?.stats || null;
-  const units = course?.units || [];
+  let units = course?.units || [];
+  
+  // If generating, merge with stream state units
+  if (isGenerating && streamState.units) {
+    units = streamState.units.map((streamUnit, index) => {
+      if (streamUnit) {
+        // Use stream unit data
+        return {
+          ...streamUnit,
+          isUnlocked: true, // Generated units are unlocked
+          isGenerating: false
+        };
+      } else if (streamState.currentGenerating === index + 1) {
+        // Currently generating
+        return {
+          id: index + 1,
+          title: `Unit ${index + 1}`,
+          description: 'Generating...',
+          isUnlocked: false,
+          isGenerating: true,
+          lessons: []
+        };
+      } else {
+        // Not generated yet
+        return {
+          id: index + 1,
+          title: `Unit ${index + 1}`,
+          description: 'Waiting...',
+          isUnlocked: false,
+          isGenerating: false,
+          lessons: []
+        };
+      }
+    });
+  }
   
   // Calculate progress and XP
   const progress = useMemo(() => calculateProgress(units), [units]);
@@ -49,7 +90,26 @@ const CoursePage = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner fullScreen text="Loading course..." />;
+    return (
+      <div className="min-h-screen bg-green-50">
+        <SkeletonPageHeader />
+        <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+          {/* Stats skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            {[1, 2, 3, 4].map((i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+          
+          {/* Units skeleton */}
+          <div className="space-y-6">
+            {[1, 2, 3].map((i) => (
+              <SkeletonUnitCard key={i} />
+            ))}
+          </div>
+        </main>
+      </div>
+    );
   }
 
   if (error || !course) {

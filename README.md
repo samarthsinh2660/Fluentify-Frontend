@@ -1,6 +1,6 @@
 # 🎓 Fluentify Frontend - Complete Documentation
 
-> A modern, scalable React application for language learning with React Query, modular architecture, and reusable components.
+> A modern, scalable React application for language learning with React Query, modular architecture, reusable components, and **real-time streaming course generation** using Server-Sent Events (SSE)!
 
 ---
 

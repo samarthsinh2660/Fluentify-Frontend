@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, BookOpen } from 'lucide-react';
-import { useCourses, useGenerateCourse } from '../../hooks/useCourses';
+import { useCourses } from '../../hooks/useCourses';
 import { useLogout } from '../../hooks/useAuth';
-import { Button, LoadingSpinner } from '../../components';
-import { CourseCard, CourseGenerationForm } from './components';
+import { useStreaming } from '../../contexts/StreamingContext';
+import { Button, SkeletonCourseCard } from '../../components';
+import { CourseCard, CourseGenerationForm, GeneratingCourseCard } from './components';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -12,42 +13,45 @@ const Dashboard = () => {
   
   // React Query hooks
   const { data: courses = [], isLoading: loading } = useCourses();
-  const generateMutation = useGenerateCourse();
+  
+  // Streaming course generation hook
+  const { generateCourse: startStreamGeneration, state: streamState, reset: resetStream } = useStreaming();
   
   // Local state
   const [error, setError] = useState('');
   const [showGenerateForm, setShowGenerateForm] = useState(false);
-  const [generateForm, setGenerateForm] = useState({ language: '', expectedDuration: '' });
-
+  const [generateForm, setGenerateForm] = useState({ language: '', expectedDuration: '', expertise: '' });
 
   const handleLogout = () => {
     logout();
   };
 
-  // Generate a new course
+  // Generate a new course using SSE
   const generateCourse = () => {
-    if (!generateForm.language || !generateForm.expectedDuration) {
-      setError('Please select both language and duration');
+    if (!generateForm.language || !generateForm.expectedDuration || !generateForm.expertise) {
+      setError('Please select language, duration, and current level');
       return;
     }
 
     setError('');
+    setShowGenerateForm(false);
     
-    generateMutation.mutate(
-      {
-        language: generateForm.language,
-        expectedDuration: generateForm.expectedDuration
-      },
-      {
-        onSuccess: () => {
-          setShowGenerateForm(false);
-          setGenerateForm({ language: '', expectedDuration: '' });
-        },
-        onError: (err) => {
-          setError(err.message || 'Failed to generate course');
-        }
-      }
-    );
+    // Start streaming course generation
+    startStreamGeneration({
+      language: generateForm.language,
+      expectedDuration: generateForm.expectedDuration,
+      expertise: generateForm.expertise
+    });
+  };
+
+  const handleCloseStream = () => {
+    resetStream();
+    setGenerateForm({ language: '', expectedDuration: '', expertise: '' });
+  };
+
+  const handleNavigateToCourse = (courseId) => {
+    resetStream();
+    navigate(`/course/${courseId}`);
   };
 
   return (
@@ -79,7 +83,8 @@ const Dashboard = () => {
             <h3 className="text-xl font-semibold">Your Courses</h3>
             <Button
               onClick={() => setShowGenerateForm(true)}
-              loading={generateMutation.isPending}
+              loading={streamState.isGenerating}
+              disabled={streamState.isGenerating}
               icon={<BookOpen className="w-4 h-4" />}
             >
               Generate New Course
@@ -93,23 +98,36 @@ const Dashboard = () => {
               onGenerate={generateCourse}
               onCancel={() => {
                 setShowGenerateForm(false);
-                setGenerateForm({ language: '', expectedDuration: '' });
+                setGenerateForm({ language: '', expectedDuration: '', expertise: '' });
                 setError('');
               }}
-              isGenerating={generateMutation.isPending}
+              isGenerating={streamState.isGenerating}
               error={error}
             />
           )}
 
           {loading ? (
-            <LoadingSpinner text="Loading courses..." />
-          ) : courses.length === 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <SkeletonCourseCard key={i} />
+              ))}
+            </div>
+          ) : courses.length === 0 && !streamState.isGenerating ? (
             <div className="text-center py-8 bg-gray-50 rounded-lg">
               <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 mb-4">No courses yet. Generate your first course to get started!</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Show generating course card first */}
+              {streamState.isGenerating && streamState.courseId && (
+                <GeneratingCourseCard
+                  state={streamState}
+                  onClick={() => navigate(`/course/${streamState.courseId}`)}
+                />
+              )}
+              
+              {/* Show existing courses */}
               {courses.map((course) => (
                 <CourseCard
                   key={course.id}
