@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
-import { useSaveLearnerPreferences } from '../../hooks/usePreferences';
-import { Button, ErrorMessage } from '../../components';
-import { CustomDropdown } from './components';
-import { LANGUAGES, DURATIONS, EXPERTISE_LEVELS } from '../../utils/constants';
+import { useSaveLearnerPreferences } from "../../../hooks/usePreferences";
+import { Button, ErrorMessage } from "../../../components";
+import { CustomDropdown } from "../courses/components";
+import { LANGUAGES, DURATIONS, EXPERTISE_LEVELS } from '../../../utils/constants';
 
 const LearnerPreferences = () => {
   const [form, setForm] = useState({

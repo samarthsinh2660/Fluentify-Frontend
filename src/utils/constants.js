@@ -30,3 +30,17 @@ export const USER_ROLES = {
   LEARNER: 'learner',
   ADMIN: 'admin',
 };
+
+// Contest types
+export const CONTEST_TYPES = [
+  { value: 'mcq', label: 'Multiple Choice Questions' },
+  { value: 'one-liner', label: 'One-Liner Answers' },
+  { value: 'mix', label: 'Mixed (MCQ + One-Liner)' },
+];
+
+// Contest status
+export const CONTEST_STATUS = {
+  ACTIVE: 'active',
+  UPCOMING: 'upcoming',
+  ENDED: 'ended',
+};

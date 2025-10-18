@@ -1,9 +1,9 @@
 import React from 'react';
 import { BookOpen } from 'lucide-react';
 import CustomDropdown from './CustomDropdown';
-import Button from '../../../components/Button';
-import ErrorMessage from '../../../components/ErrorMessage';
-import { LANGUAGES, DURATIONS, EXPERTISE_LEVELS } from '../../../utils/constants';
+import Button from "../../../../components/Button";
+import ErrorMessage from "../../../../components/ErrorMessage";
+import { LANGUAGES, DURATIONS, EXPERTISE_LEVELS } from "../../../../utils/constants";
 
 /**
  * Course Generation Form Component

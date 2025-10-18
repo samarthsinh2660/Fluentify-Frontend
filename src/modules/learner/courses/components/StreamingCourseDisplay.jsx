@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircle, Loader, Clock } from 'lucide-react';
-import { Button } from '../../../components';
+import { Button } from "../../../../components";
 
 /**
  * Streaming Course Display Component

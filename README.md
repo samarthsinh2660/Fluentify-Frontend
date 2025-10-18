@@ -1,592 +1,472 @@
-# 🎓 Fluentify Frontend - Complete Documentation
+# 🎓 Fluentify - AI-Powered Language Learning Platform
 
-> A modern, scalable React application for language learning with React Query, modular architecture, reusable components, and **real-time streaming course generation** using Server-Sent Events (SSE)!
+> Master any language with personalized AI-generated courses, interactive contests, real-time voice practice, and intelligent chatbot assistance!
+
+[![React](https://img.shields.io/badge/React-19-blue.svg)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-7-purple.svg)](https://vitejs.dev/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4-cyan.svg)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
 
-## 📋 Table of Contents
-- [Quick Start](#-quick-start)
-- [Project Structure](#-project-structure)
-- [Architecture](#-architecture)
-- [Components](#-components)
-- [React Query Hooks](#-react-query-hooks)
-- [Why Index.js Files?](#-why-indexjs-files-barrel-exports)
-- [Development Guide](#-development-guide)
-- [Best Practices](#-best-practices)
+## 🌟 What is Fluentify?
+
+Fluentify is a **next-generation language learning platform** that uses artificial intelligence to create personalized learning experiences. Whether you're a beginner or an advanced learner, Fluentify adapts to your pace and goals.
+
+### 🎯 Perfect For
+- **Language Learners** - Master Spanish, French, German, Italian, Japanese, or Hindi
+- **Educational Institutions** - Manage courses and track student progress
+- **Self-Learners** - Study at your own pace with AI assistance
+- **Competitive Learners** - Test your skills in timed contests
+
+---
+
+## ✨ Key Features
+
+### 🤖 **AI-Powered Course Generation**
+- **Intelligent Course Creation** - AI generates complete courses tailored to your level and goals
+- **Real-Time Streaming** - Watch your course being built in real-time
+- **Personalized Curriculum** - Courses adapt to your language, expertise, and learning duration
+- **Structured Learning** - Organized units and lessons with clear progression
+
+### 🎙️ **AI Voice Practice**
+- **Natural Conversations** - Practice speaking with advanced AI voice technology
+- **Real-Time Feedback** - Get instant pronunciation and grammar corrections
+- **Interactive Dialogues** - Engage in realistic conversations
+- **Voice Recognition** - AI understands and responds to your speech
+
+### 💬 **Smart Chatbot Assistant**
+- **24/7 Language Help** - Ask questions anytime about grammar, vocabulary, or culture
+- **Session Management** - Multiple chat sessions for different topics
+- **Context-Aware** - AI remembers your conversation history
+- **Learning Support** - Get explanations, examples, and practice exercises
+
+### 🏆 **Interactive Contests**
+- **Competitive Learning** - Test your skills against other learners
+- **Multiple Question Types** - MCQ and fill-in-the-blank challenges
+- **Real-Time Leaderboards** - See where you rank globally
+- **Timed Challenges** - Improve speed and accuracy
+- **Reward System** - Earn points for correct answers
+
+### 👨‍💼 **Admin Dashboard**
+- **Contest Management** - Create, edit, and manage language contests
+- **AI Contest Generation** - Generate contests automatically with AI
+- **Analytics & Stats** - Track participation and performance metrics
+- **User Management** - Monitor learner progress and engagement
+- **Content Control** - Publish/unpublish contests and courses
+
+### 📊 **Progress Tracking**
+- **Course Completion** - Track your progress through each course
+- **Performance Analytics** - See your strengths and areas for improvement
+- **Lesson History** - Review completed lessons and exercises
+- **Achievement System** - Unlock badges and milestones
+
+### 🎨 **Beautiful User Experience**
+- **Modern Design** - Clean, gradient-based UI with smooth animations
+- **Mobile Responsive** - Perfect on phones, tablets, and desktops
+- **Dark/Light Mode** - Comfortable viewing in any environment
+- **Intuitive Navigation** - Easy to find everything you need
 
 ---
 
 ## 🚀 Quick Start
 
-### **Installation**
+### **For Learners**
 ```bash
+# Clone the repository
+git clone <repository-url>
+
+# Install dependencies
 npm install
-```
 
-### **Development**
-```bash
+# Start the app
 npm run dev
+
+# Visit http://localhost:5173
 ```
 
-### **Build**
+**Then:**
+1. **Sign up** as a learner
+2. **Set your preferences** (language, level, duration)
+3. **Generate a course** with AI or browse existing ones
+4. **Start learning** through structured lessons
+5. **Practice speaking** with AI voice
+6. **Take contests** to test your skills
+7. **Chat with AI** anytime you need help
+
+### **For Admins**
 ```bash
-npm run build
+# Same installation as above
+npm run dev
+
+# Login with admin credentials
+# Access admin dashboard at /admin-dashboard
 ```
 
-### **Preview Build**
-```bash
-npm preview
-```
+**Then:**
+1. **Create contests** manually or with AI
+2. **Manage content** - Edit, publish, or delete
+3. **View analytics** - Track user engagement
+4. **Monitor performance** - See detailed statistics
 
 ---
 
-## 📂 Project Structure
+## 🎮 How to Use
 
-```
-src/
-├── App/
-│   ├── App.jsx              # Main app component with routing
-│   └── index.css            # Global styles
-├── api/
-│   ├── auth.js              # Authentication API calls
-│   ├── courses.js           # Course-related API calls
-│   └── preferences.js       # Learner preferences API calls
-├── components/              # Shared components
-│   ├── Button.jsx
-│   ├── ErrorMessage.jsx
-│   ├── Input.jsx
-│   ├── LoadingSpinner.jsx
-│   ├── PageHeader.jsx
-│   └── index.js             # Barrel export
-├── hooks/                   # React Query hooks
-│   ├── useAuth.js           # Auth hooks
-│   ├── useCourses.js        # Course hooks
-│   └── usePreferences.js    # Preference hooks
-├── modules/                 # Feature modules
-│   ├── auth/
-│   │   ├── components/
-│   │   │   ├── PasswordInput.jsx
-│   │   │   └── index.js
-│   │   ├── Login.jsx
-│   │   ├── Signup.jsx
-│   │   └── index.js
-│   ├── learner/
-│   │   ├── components/
-│   │   │   ├── CourseCard.jsx
-│   │   │   ├── CourseGenerationForm.jsx
-│   │   │   ├── CustomDropdown.jsx
-│   │   │   ├── LessonCard.jsx
-│   │   │   ├── StatCard.jsx
-│   │   │   ├── UnitCard.jsx
-│   │   │   └── index.js
-│   │   ├── CoursePage.jsx
-│   │   ├── Dashboard.jsx
-│   │   ├── LearnerPreferences.jsx
-│   │   ├── LessonPage.jsx
-│   │   └── index.js
-│   └── admin/
-│       ├── AdminDashboard.jsx
-│       └── index.js
-├── utils/
-│   ├── constants.js         # Centralized constants
-│   └── courseHelpers.js     # Helper functions
-└── main.jsx                 # App entry point
-```
+### **For Language Learners**
 
----
+#### **1. Get Started**
+- Create a learner account
+- Choose your target language
+- Set your current expertise level
+- Define your learning timeline
 
-## 🏗️ Architecture
+#### **2. Generate Your Course**
+- Click "Generate New Course"
+- Watch AI create your personalized curriculum
+- Course includes units, lessons, and exercises
+- Content matches your level and goals
 
-### **1. Modular Organization**
-The app is organized by features (auth, learner, admin) rather than by file type. This makes the codebase:
-- ✅ **Scalable** - Easy to add new features
-- ✅ **Maintainable** - Related code stays together
-- ✅ **Clear** - Obvious where to find things
+#### **3. Learn Interactively**
+- **Study Lessons** - Read, watch, and learn new concepts
+- **Complete Exercises** - Practice what you've learned
+- **Track Progress** - See completion percentages
+- **Review Material** - Go back anytime
 
-### **2. React Query for Data Management**
-All server data is managed through React Query:
-- ✅ **Automatic caching** - No repeated API calls
-- ✅ **Background refetching** - Data stays fresh
-- ✅ **Loading & error states** - Built-in handling
-- ✅ **Optimistic updates** - Instant UI feedback
+#### **4. Practice Speaking**
+- Click "Talk with AI" button
+- Have real conversations in your target language
+- Get instant feedback on pronunciation
+- Build confidence speaking
 
-### **3. Separation of Concerns**
-```
-UI Components (JSX) 
-    ↓
-React Query Hooks (data fetching logic)
-    ↓
-API Functions (network requests)
-    ↓
-Backend
-```
+#### **5. Use the Chatbot**
+- Click the floating chat button (bottom-right)
+- Ask questions about grammar, vocabulary, culture
+- Get instant explanations and examples
+- Save conversations for later reference
 
----
+#### **6. Take Contests**
+- Browse available contests by language
+- Choose your difficulty level
+- Complete timed challenges
+- View your rank on the leaderboard
+- Earn reward points
 
-## 🧩 Components
+### **For Administrators**
 
-### **Shared Components** (`src/components/`)
-Used across the entire application.
+#### **1. Access Admin Panel**
+- Login with admin credentials
+- Navigate to Admin Dashboard
+- View overview of all features
 
-#### **Button**
-```jsx
-import { Button } from '../components';
+#### **2. Create Contests**
 
-<Button 
-  variant="primary"      // primary|secondary|danger|ghost|success
-  size="md"             // sm|md|lg
-  loading={isLoading}
-  icon={<Icon />}
-  onClick={handleClick}
->
-  Click Me
-</Button>
-```
+**AI-Generated (Recommended):**
+- Click "Generate with AI"
+- Select language and difficulty
+- Choose question type (MCQ, one-liner, or mix)
+- Set topic (optional)
+- Configure dates, time limits, and rewards
+- AI creates questions in 5-10 seconds
+- Review and edit if needed
+- Publish when ready
 
-#### **Input**
-```jsx
-import { Input } from '../components';
+**Manual Creation:**
+- Click "Create Manually"
+- Add questions one by one
+- Set correct answers and explanations
+- Configure contest settings
+- Publish to learners
 
-<Input
-  label="Email"
-  type="email"
-  icon={<Mail />}
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-  error={errorMessage}
-/>
-```
+#### **3. Manage Contests**
+- View all contests (published and drafts)
+- Filter by language, difficulty, or type
+- Edit existing contests
+- Publish or unpublish anytime
+- Delete contests if needed
 
-#### **LoadingSpinner**
-```jsx
-import { LoadingSpinner } from '../components';
-
-<LoadingSpinner size="md" />
-// or full screen
-<LoadingSpinner fullScreen text="Loading..." />
-```
-
-#### **PageHeader**
-```jsx
-import { PageHeader } from '../components';
-
-<PageHeader
-  title="Page Title"
-  subtitle="Optional subtitle"
-  showBack
-  actions={<Button>Action</Button>}
-/>
-```
-
-#### **ErrorMessage**
-```jsx
-import { ErrorMessage } from '../components';
-
-<ErrorMessage 
-  message={error} 
-  onDismiss={() => setError('')} 
-/>
-```
-
-### **Module-Specific Components**
-Components specific to a feature module.
-
-**Learner Components** (`src/modules/learner/components/`):
-- `CourseCard` - Display course information
-- `CourseGenerationForm` - Form to generate new courses
-- `CustomDropdown` - Custom dropdown with flags
-- `LessonCard` - Display lesson information
-- `StatCard` - Display statistics
-- `UnitCard` - Display unit information
-
-**Auth Components** (`src/modules/auth/components/`):
-- `PasswordInput` - Password input with show/hide toggle
+#### **4. View Analytics**
+- See total participants
+- Check average scores
+- View top performers
+- Monitor engagement metrics
+- Export data for reporting
 
 ---
 
-## 🎣 React Query Hooks
+## 🎯 User Roles
 
-### **Authentication Hooks** (`src/hooks/useAuth.js`)
+### **Learner**
+✅ Generate AI-powered courses
+✅ Complete lessons and exercises
+✅ Practice with AI voice
+✅ Chat with AI assistant
+✅ Take contests
+✅ View leaderboards
+✅ Track personal progress
 
-```jsx
-import { useLogin, useSignup, useLogout, useUserProfile } from '../hooks/useAuth';
-
-// Login
-const loginMutation = useLogin();
-loginMutation.mutate({ role: 'learner', email, password });
-
-// Signup
-const signupMutation = useSignup();
-signupMutation.mutate({ role: 'learner', name, email, password });
-
-// Logout
-const logoutMutation = useLogout();
-logoutMutation.mutate();
-
-// Get User Profile
-const { data: user, isLoading } = useUserProfile();
-
-// Check if authenticated
-const isAuthenticated = useIsAuthenticated();
-```
-
-### **Course Hooks** (`src/hooks/useCourses.js`)
-
-```jsx
-import { 
-  useCourses, 
-  useGenerateCourse, 
-  useCourseDetails,
-  useLessonDetails,
-  useGenerateExercises,
-  useCompleteLesson 
-} from '../hooks/useCourses';
-
-// Fetch all courses
-const { data: courses, isLoading } = useCourses();
-
-// Generate new course
-const generateMutation = useGenerateCourse();
-generateMutation.mutate({ language: 'Spanish', expectedDuration: '3 months' });
-
-// Get course details
-const { data: course } = useCourseDetails(courseId);
-
-// Get lesson details
-const { data: lesson } = useLessonDetails({ courseId, unitId, lessonId });
-
-// Generate exercises
-const exercisesMutation = useGenerateExercises();
-exercisesMutation.mutate({ courseId, unitId, lessonId });
-
-// Complete lesson
-const completeMutation = useCompleteLesson();
-completeMutation.mutate({ courseId, unitId, lessonId, score: 100 });
-```
-
-### **Preference Hooks** (`src/hooks/usePreferences.js`)
-
-```jsx
-import { useLearnerPreferences, useSaveLearnerPreferences } from '../hooks/usePreferences';
-
-// Fetch preferences
-const { data: preferences } = useLearnerPreferences();
-
-// Save preferences
-const saveMutation = useSaveLearnerPreferences();
-saveMutation.mutate({ language: 'Spanish', expected_duration: '3 months', expertise: 'beginner' });
-```
+### **Admin**
+✅ Create contests (AI or manual)
+✅ Edit contest questions
+✅ Publish/unpublish contests
+✅ View detailed statistics
+✅ Monitor user engagement
+✅ Manage platform content
 
 ---
 
-## 📦 Why Index.js Files? (Barrel Exports)
+## 🌍 Supported Languages
 
-You'll see `index.js` files in many folders. These are called **barrel exports** and they make imports cleaner.
-
-### **Without Barrel Exports:**
-```jsx
-// ❌ Messy imports
-import Button from '../components/Button';
-import Input from '../components/Input';
-import LoadingSpinner from '../components/LoadingSpinner';
-import ErrorMessage from '../components/ErrorMessage';
-```
-
-### **With Barrel Exports:**
-```jsx
-// ✅ Clean imports
-import { Button, Input, LoadingSpinner, ErrorMessage } from '../components';
-```
-
-### **How It Works:**
-
-**`src/components/index.js`:**
-```javascript
-export { default as Button } from './Button';
-export { default as Input } from './Input';
-export { default as LoadingSpinner } from './LoadingSpinner';
-export { default as ErrorMessage } from './ErrorMessage';
-export { default as PageHeader } from './PageHeader';
-```
-
-Now you can import multiple components from one location!
-
-### **Benefits:**
-- ✅ **Cleaner imports** - One import line instead of many
-- ✅ **Easier refactoring** - Change file structure without updating all imports
-- ✅ **Better organization** - Clear public API for each module
+- 🇪🇸 **Spanish** - Beginner to Advanced
+- 🇫🇷 **French** - Beginner to Advanced
+- 🇩🇪 **German** - Beginner to Advanced
+- 🇮🇹 **Italian** - Beginner to Advanced
+- 🇯🇵 **Japanese** - Beginner to Advanced
+- 🇮🇳 **Hindi** - Beginner to Advanced
 
 ---
 
-## 🛠️ Development Guide
+## 📱 Platform Features
 
-### **Adding a New Page**
+### **Responsive Design**
+- 📱 **Mobile** - Optimized for smartphones with touch-friendly interfaces
+- 💻 **Tablet** - Perfect for iPad and Android tablets
+- 🖥️ **Desktop** - Full-featured experience on larger screens
+- 🔄 **Auto-Adapt** - Layout adjusts automatically
 
-1. **Create the page file in the appropriate module:**
-   ```jsx
-   // src/modules/learner/NewPage.jsx
-   import React from 'react';
-   import { PageHeader } from '../../components';
-   
-   const NewPage = () => {
-     return (
-       <div>
-         <PageHeader title="New Page" />
-         {/* Your content */}
-       </div>
-     );
-   };
-   
-   export default NewPage;
-   ```
+### **Real-Time Features**
+- ⚡ **Live Updates** - Leaderboards update in real-time
+- 🔄 **Auto-Refresh** - Data syncs automatically
+- 💬 **Instant Chat** - AI responds immediately
+- 📊 **Live Progress** - Watch your course generate
 
-2. **Export it from the module index:**
-   ```javascript
-   // src/modules/learner/index.js
-   export { default as NewPage } from './NewPage';
-   ```
+### **Smart Technology**
+- 🧠 **AI Course Generation** - Creates personalized content
+- 🎙️ **Voice AI Integration** - Natural speech recognition
+- 💬 **Intelligent Chatbot** - Context-aware conversations
+- 🏆 **AI Contest Creation** - Auto-generates questions
 
-3. **Add route in App.jsx:**
-   ```jsx
-   import { NewPage } from '../modules/learner';
-   
-   <Route path="/new-page" element={<NewPage />} />
-   ```
+### **User Experience**
+- 🎨 **Modern UI** - Beautiful gradient designs
+- ⚡ **Fast Loading** - Optimized performance
+- 🌓 **Theme Support** - Light and dark modes
+- ♿ **Accessible** - WCAG compliant design
+---
 
-### **Adding a New Component**
+## 🔐 Security & Privacy
 
-1. **Create the component:**
-   ```jsx
-   // src/components/Card.jsx
-   const Card = ({ title, children }) => {
-     return (
-       <div className="bg-white rounded-lg shadow p-4">
-         <h3>{title}</h3>
-         {children}
-       </div>
-     );
-   };
-   
-   export default Card;
-   ```
-
-2. **Add to barrel export:**
-   ```javascript
-   // src/components/index.js
-   export { default as Card } from './Card';
-   ```
-
-3. **Use it anywhere:**
-   ```jsx
-   import { Card } from '../components';
-   
-   <Card title="My Card">Content here</Card>
-   ```
-
-### **Adding a New API Endpoint**
-
-1. **Add API function:**
-   ```javascript
-   // src/api/courses.js
-   export const deleteCourse = async (courseId) => {
-     const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
-       method: 'DELETE',
-       headers: getAuthHeader()
-     });
-     return handleResponse(response);
-   };
-   ```
-
-2. **Create React Query hook:**
-   ```javascript
-   // src/hooks/useCourses.js
-   export const useDeleteCourse = () => {
-     const queryClient = useQueryClient();
-     
-     return useMutation({
-       mutationFn: deleteCourse,
-       onSuccess: () => {
-         queryClient.invalidateQueries({ queryKey: ['courses'] });
-       }
-     });
-   };
-   ```
-
-3. **Use in component:**
-   ```jsx
-   const deleteMutation = useDeleteCourse();
-   
-   deleteMutation.mutate(courseId);
-   ```
-
-### **Adding Constants**
-
-```javascript
-// src/utils/constants.js
-export const NEW_CONSTANT = {
-  OPTION_1: 'value1',
-  OPTION_2: 'value2'
-};
-```
-
-Then use:
-```jsx
-import { NEW_CONSTANT } from '../utils/constants';
-```
+- 🔒 **Secure Authentication** - JWT-based login system
+- 🛡️ **Role-Based Access** - Learner and admin permissions
+- 🔐 **Protected Routes** - Unauthorized access prevention
+- 💾 **Data Privacy** - Your learning data is secure
+- ✅ **Input Validation** - All forms are validated
+- 🚫 **XSS Protection** - Security best practices
 
 ---
 
-## ✨ Best Practices
+## 🎯 Learning Path
 
-### **1. Always Use React Query for Server Data**
-```jsx
-// ❌ DON'T do this
-const [data, setData] = useState(null);
-useEffect(() => {
-  fetch('/api/data').then(r => r.json()).then(setData);
-}, []);
+### **Beginner (0-3 months)**
+1. Complete AI-generated beginner course
+2. Practice daily with voice AI
+3. Use chatbot for grammar questions
+4. Take beginner-level contests
+5. Focus on building vocabulary
 
-// ✅ DO this
-const { data } = useQuery({ queryKey: ['data'], queryFn: fetchData });
-```
+### **Intermediate (3-12 months)**
+1. Generate intermediate-level courses
+2. Have longer AI conversations
+3. Compete in intermediate contests
+4. Learn complex grammar through chatbot
+5. Aim for top leaderboard positions
 
-### **2. Use Shared Components**
-```jsx
-// ❌ DON'T duplicate UI
-<button className="px-4 py-2 bg-blue-500 text-white rounded">
-  Click Me
-</button>
-
-// ✅ DO use shared components
-<Button variant="primary">Click Me</Button>
-```
-
-### **3. Centralize Constants**
-```jsx
-// ❌ DON'T hardcode values
-const languages = ['Spanish', 'French', 'German'];
-
-// ✅ DO use constants
-import { LANGUAGES } from '../utils/constants';
-```
-
-### **4. Handle Loading & Error States**
-```jsx
-const { data, isLoading, error } = useQuery(...);
-
-if (isLoading) return <LoadingSpinner />;
-if (error) return <ErrorMessage message={error.message} />;
-
-return <div>{/* Success state */}</div>;
-```
-
-### **5. Use Barrel Exports**
-```jsx
-// ❌ DON'T
-import Button from './components/Button';
-import Input from './components/Input';
-
-// ✅ DO
-import { Button, Input } from './components';
-```
+### **Advanced (12+ months)**
+1. Create custom advanced courses
+2. Practice advanced dialogue with AI
+3. Master difficult contests
+4. Help others via community features
+5. Maintain fluency through regular practice
 
 ---
 
-## 🎯 Code Quality Checklist
+## 💡 Tips for Success
 
-Before submitting code, ensure:
+### **Maximize Your Learning**
+- ✅ **Be Consistent** - Study a little every day
+- ✅ **Use All Features** - Combine courses, voice, chat, and contests
+- ✅ **Practice Speaking** - Use voice AI regularly
+- ✅ **Ask Questions** - The chatbot is always available
+- ✅ **Compete** - Tests reinforce learning
+- ✅ **Review** - Go back to previous lessons
+- ✅ **Set Goals** - Use the progress tracker
 
-- [ ] No duplicate components
-- [ ] No duplicate API calls
-- [ ] No hardcoded constants
-- [ ] All constants in `utils/constants.js`
-- [ ] Using React Query for data fetching
-- [ ] Using shared components
-- [ ] Loading states handled
-- [ ] Error states handled
-- [ ] Barrel exports used
-- [ ] No console.log statements
-- [ ] Code is formatted
-
----
-
-## 🔧 Tech Stack
-
-- **React 19** - UI library
-- **Vite** - Build tool
-- **React Router** - Routing
-- **TanStack Query (React Query)** - Data fetching
-- **Tailwind CSS** - Styling
-- **Lucide React** - Icons
-- **Validator** - Form validation
-- **JWT Decode** - Token parsing
-- **React Country Flag** - Flag components
+### **Get the Most from AI**
+- 💬 **Be Specific** - Ask detailed questions to the chatbot
+- 🎙️ **Speak Clearly** - Better voice recognition results
+- 📚 **Request Examples** - AI can generate practice sentences
+- 🔄 **Try Again** - Regenerate if content isn't perfect
+- 💭 **Explain Concepts** - Ask AI to explain in different ways
 
 ---
 
-## 📊 Project Stats
+## 📊 Statistics & Analytics
 
-- **Total Components:** 17
-- **Shared Components:** 5
-- **Module Components:** 7
-- **Pages:** 8
-- **React Query Hooks:** 13
-- **API Functions:** 11
-- **Lines of Code:** ~2,500
+### **For Learners**
+- View course completion rates
+- Track contest performance
+- See time spent learning
+- Monitor vocabulary growth
+- Review lesson scores
+- Check achievement progress
 
----
-
-## 🎓 Learning Resources
-
-- [React Query Docs](https://tanstack.com/query/latest)
-- [React Router Docs](https://reactrouter.com/)
-- [Tailwind CSS Docs](https://tailwindcss.com/)
-- [Vite Docs](https://vitejs.dev/)
-
----
-
-## ✅ What's Different from Standard React?
-
-### **Standard React:**
-```jsx
-const [data, setData] = useState(null);
-const [loading, setLoading] = useState(false);
-const [error, setError] = useState(null);
-
-useEffect(() => {
-  setLoading(true);
-  fetch('/api/data')
-    .then(r => r.json())
-    .then(setData)
-    .catch(setError)
-    .finally(() => setLoading(false));
-}, []);
-```
-
-### **Our React (with React Query):**
-```jsx
-const { data, isLoading, error } = useQuery({
-  queryKey: ['data'],
-  queryFn: fetchData
-});
-```
-
-**Benefits:**
-- ✅ Less code
-- ✅ Automatic caching
-- ✅ Background refetching
-- ✅ No useEffect needed
-- ✅ Better performance
+### **For Admins**
+- Total user count and engagement
+- Contest participation rates
+- Average scores and performance
+- Popular languages and courses
+- Peak usage times
+- Export data for reports
 
 ---
 
-## 🚀 You're Ready!
+## 🎓 System Requirements
 
-Your Fluentify frontend is production-ready with:
-- ✅ Modern architecture
-- ✅ Reusable components
-- ✅ Clean code
-- ✅ Best practices
-- ✅ Scalable structure
+### **Minimum**
+- **Browser:** Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+- **RAM:** 4GB
+- **Internet:** Stable broadband connection
+- **Screen:** 1024x768 or higher
 
-**Happy coding! 🎉**
+### **Recommended**
+- **Browser:** Latest version of Chrome or Firefox
+- **RAM:** 8GB or more
+- **Internet:** 10+ Mbps for voice features
+- **Screen:** 1920x1080 Full HD
+- **Microphone:** For voice AI practice
+- **Speakers/Headphones:** For audio feedback
+
+---
+
+## 🆘 Support & Help
+
+### **Common Issues**
+
+**Q: Chatbot button not appearing?**
+A: Make sure you're logged in as a learner (not admin). Refresh the page.
+
+**Q: Voice AI not working?**
+A: Check browser permissions for microphone access. Use Chrome for best results.
+
+**Q: Contest won't submit?**
+A: Ensure all questions are answered. Check your internet connection.
+
+**Q: Course generation stuck?**
+A: Refresh the page and try again. Generation takes 10-30 seconds.
+
+**Q: Can't see leaderboard?**
+A: Complete the contest first. Leaderboards show after submission.
+
+### **Need More Help?**
+- 📧 **Email:** support@fluentify.com
+- 💬 **Chat:** Use the in-app chatbot
+- 📚 **Documentation:** See [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)
+- 🐛 **Report Bugs:** Open an issue on GitHub
+
+---
+
+## 🚀 Roadmap
+
+### **Coming Soon**
+- [ ] Mobile apps (iOS & Android)
+- [ ] Offline mode
+- [ ] Group learning rooms
+- [ ] Video lessons
+- [ ] Certification system
+- [ ] More languages
+- [ ] Gamification badges
+- [ ] Social features
+- [ ] Premium subscriptions
+- [ ] API for developers
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Whether you're:
+- 🐛 Reporting bugs
+- 💡 Suggesting features
+- 📝 Improving documentation
+- 🔧 Fixing issues
+- ✨ Adding features
+
+Please read our [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) for technical details.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- OpenAI for AI capabilities
+- React team for the amazing framework
+- TanStack for React Query
+- Tailwind CSS for beautiful styling
+- Lucide for icons
+- All our contributors and users
+
+---
+
+## 👨‍💻 For Developers
+
+If you're a developer looking to:
+- Understand the codebase
+- Add new features
+- Fix bugs
+- Deploy the application
+- Integrate with the API
+
+**Please see our comprehensive technical documentation:**
+
+### 📚 **[DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)**
+
+The developer guide includes:
+- Complete project structure
+- Architecture decisions
+- API documentation
+- Component library
+- State management
+- Build and deployment
+- Testing guidelines
+- Best practices
+- Troubleshooting
+
+---
+
+## 📞 Contact
+
+- **Website:** https://fluentify.com
+- **Email:** hello@fluentify.com
+- **Twitter:** @FluentifyApp
+- **LinkedIn:** Fluentify
+
+---
+
+## ⭐ Show Your Support
+
+If you like Fluentify, please:
+- ⭐ Star this repository
+- 🐦 Share on social media
+- 📝 Write a review
+- 🤝 Contribute to the project
+- 💬 Spread the word
+
+---
+
+**Made with ❤️ by the Fluentify Team**
+
+**Start your language learning journey today! 🌍✨**
+

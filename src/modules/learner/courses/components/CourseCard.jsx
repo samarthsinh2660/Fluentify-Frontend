@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BookOpen, Flame, CheckCircle, Trash2, AlertTriangle } from 'lucide-react';
-import { deleteCourse } from '../../../api/courses';
-import { useCourses } from '../../../hooks/useCourses';
+import { deleteCourse } from "../../../../api/courses";
+import { useCourses } from "../../../../hooks/useCourses";
 
 /**
  * Course Card Component

@@ -13,3 +13,4 @@ export {
   SkeletonUnitCard,
   SkeletonPageHeader
 } from './Skeleton';
+export { ChatBot, FloatingChatButton, ChatInterface } from './ChatBot';

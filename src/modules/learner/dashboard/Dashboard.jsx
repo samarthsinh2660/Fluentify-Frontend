@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, BookOpen, MessageCircle } from 'lucide-react';
-import { useCourses } from '../../hooks/useCourses';
-import { useLogout } from '../../hooks/useAuth';
-import { useStreaming } from '../../contexts/StreamingContext';
-import { Button, SkeletonCourseCard, VoiceAIModal } from '../../components';
-import { CourseCard, CourseGenerationForm, GeneratingCourseCard } from './components';
+import { LogOut, BookOpen, MessageCircle, Trophy } from 'lucide-react';
+import { useCourses } from '../../../hooks/useCourses';
+import { useLogout } from '../../../hooks/useAuth';
+import { useStreaming } from '../../../contexts/StreamingContext';
+import { Button, SkeletonCourseCard, VoiceAIModal } from '../../../components';
+import { CourseCard, CourseGenerationForm, GeneratingCourseCard } from '../courses/components';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -83,6 +83,13 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold">Your Courses</h3>
             <div className="flex items-center gap-3">
+              <Button
+                onClick={() => navigate('/contests')}
+                variant="outline"
+                icon={<Trophy className="w-4 h-4" />}
+              >
+                Contests
+              </Button>
               <Button
                 onClick={() => setShowVoiceAI(true)}
                 variant="outline"

@@ -1,11 +1,11 @@
 import React, { useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { BookOpen, Target, Award, Flame } from 'lucide-react';
-import { useCourseDetails } from '../../hooks/useCourses';
-import { useStreaming } from '../../contexts/StreamingContext';
-import { calculateProgress, calculateTotalXP } from '../../utils/courseHelpers';
-import { PageHeader, SkeletonPageHeader, SkeletonCard, SkeletonUnitCard } from '../../components';
-import { StatCard, UnitCard } from './components';
+import { useCourseDetails } from "../../../../hooks/useCourses";
+import { useStreaming } from "../../../../contexts/StreamingContext";
+import { calculateProgress, calculateTotalXP } from "../../../../utils/courseHelpers";
+import { PageHeader, SkeletonPageHeader, SkeletonCard, SkeletonUnitCard } from '../../../../components';
+import { StatCard, UnitCard } from '../components';
 
 const CoursePage = () => {
   const { courseId } = useParams();
@@ -140,6 +140,9 @@ const CoursePage = () => {
       {/* Header */}
       <PageHeader
         title={course.title}
+        subtitle={`${course.language} • ${course.expertise_level}`}
+        icon={<BookOpen className="w-6 h-6" />}
+        smallTitle={true}
         showBack
         onBack={() => navigate('/dashboard')}
       />
