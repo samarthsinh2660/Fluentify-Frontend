@@ -47,8 +47,18 @@ const EditContestPage = () => {
         difficultyLevel: contest.difficultyLevel || '',
         contestType: contest.contestType || 'mcq',
         questions: contest.questions || [],
-        startDate: contest.startDate ? new Date(contest.startDate).toISOString().slice(0, 16) : '',
-        endDate: contest.endDate ? new Date(contest.endDate).toISOString().slice(0, 16) : '',
+        startDate: contest.startDate ? (() => {
+          const date = new Date(contest.startDate);
+          // Adjust for timezone offset to display in local time
+          date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+          return date.toISOString().slice(0, 16);
+        })() : '',
+        endDate: contest.endDate ? (() => {
+          const date = new Date(contest.endDate);
+          // Adjust for timezone offset to display in local time
+          date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+          return date.toISOString().slice(0, 16);
+        })() : '',
         rewardPoints: contest.rewardPoints || 100,
         maxAttempts: contest.maxAttempts || 1,
         timeLimit: contest.timeLimit || 30,
@@ -115,10 +125,14 @@ const EditContestPage = () => {
       };
 
       if (formData.startDate) {
-        updates.startDate = new Date(formData.startDate).toISOString();
+        // Convert local datetime input to UTC for server
+        const localDate = new Date(formData.startDate);
+        updates.startDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000).toISOString();
       }
       if (formData.endDate) {
-        updates.endDate = new Date(formData.endDate).toISOString();
+        // Convert local datetime input to UTC for server
+        const localDate = new Date(formData.endDate);
+        updates.endDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000).toISOString();
       }
 
       await updateContest.mutateAsync({
