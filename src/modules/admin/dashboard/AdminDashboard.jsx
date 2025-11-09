@@ -1,13 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../../hooks/useAuth';
-import { LogOut, Trophy, Sparkles, BarChart3 } from 'lucide-react';
+import { LogOut, Trophy, Sparkles, BarChart3, Users } from 'lucide-react';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const logout = useLogout();
 
   const dashboardCards = [
+    {
+      title: 'User Management',
+      description: 'Manage learner accounts, view details, and reset passwords',
+      icon: Users,
+      color: 'from-purple-500 to-pink-500',
+      onClick: () => navigate('/admin/users'),
+    },
     {
       title: 'Contest Management',
       description: 'Create, edit, and manage language learning contests',
@@ -54,7 +61,7 @@ const AdminDashboard = () => {
           <p className="text-gray-600">Manage your language learning platform</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {dashboardCards.map((card, index) => {
             const Icon = card.icon;
             return (

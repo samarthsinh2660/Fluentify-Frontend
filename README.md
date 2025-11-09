@@ -49,10 +49,11 @@ Fluentify is a **next-generation language learning platform** that uses artifici
 - **Reward System** - Earn points for correct answers
 
 ### 👨‍💼 **Admin Dashboard**
+- **User Management** - Complete CRUD operations for managing learner accounts
 - **Contest Management** - Create, edit, and manage language contests
 - **AI Contest Generation** - Generate contests automatically with AI
 - **Analytics & Stats** - Track participation and performance metrics
-- **User Management** - Monitor learner progress and engagement
+- **Account Control** - Edit user details, reset passwords, delete accounts
 - **Content Control** - Publish/unpublish contests and courses
 
 ### 📊 **Progress Tracking**
@@ -104,10 +105,11 @@ npm run dev
 ```
 
 **Then:**
-1. **Create contests** manually or with AI
-2. **Manage content** - Edit, publish, or delete
-3. **View analytics** - Track user engagement
-4. **Monitor performance** - See detailed statistics
+1. **Manage users** - View, edit, and delete learner accounts
+2. **Create contests** manually or with AI
+3. **Manage content** - Edit, publish, or delete
+4. **View analytics** - Track user engagement
+5. **Monitor performance** - See detailed statistics
 
 ---
 
@@ -159,7 +161,15 @@ npm run dev
 - Navigate to Admin Dashboard
 - View overview of all features
 
-#### **2. Create Contests**
+#### **2. Manage Users**
+- View all learner accounts with search and pagination
+- Check user statistics (courses, XP, lessons completed, streak)
+- Edit user details (name, email)
+- Reset user passwords
+- Delete user accounts (removes all associated data)
+- View user's enrolled courses
+
+#### **3. Create Contests**
 
 **AI-Generated (Recommended):**
 - Click "Generate with AI"
@@ -178,14 +188,14 @@ npm run dev
 - Configure contest settings
 - Publish to learners
 
-#### **3. Manage Contests**
+#### **4. Manage Contests**
 - View all contests (published and drafts)
 - Filter by language, difficulty, or type
 - Edit existing contests
 - Publish or unpublish anytime
 - Delete contests if needed
 
-#### **4. View Analytics**
+#### **5. View Analytics**
 - See total participants
 - Check average scores
 - View top performers
@@ -206,6 +216,9 @@ npm run dev
 ✅ Track personal progress
 
 ### **Admin**
+✅ Manage learner accounts (view, edit, delete)
+✅ Reset user passwords
+✅ View user statistics and progress
 ✅ Create contests (AI or manual)
 ✅ Edit contest questions
 ✅ Publish/unpublish contests

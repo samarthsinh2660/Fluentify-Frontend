@@ -37,7 +37,9 @@ Frontend/
 │   │   ├── chatbot.js                ← Chatbot endpoints
 │   │   ├── contests.js               ← Contest endpoints
 │   │   ├── courses.js                ← Course endpoints
-│   │   └── preferences.js            ← User preferences
+│   │   ├── preferences.js            ← User preferences
+│   │   ├── userManagement.js         ← User management (Admin)
+│   │   └── apiHelpers.js             ← Shared API utilities
 │   │
 │   ├── hooks/                        ← Custom State Management
 │   │   ├── useAuth.js                ← Authentication hooks
@@ -56,7 +58,8 @@ Frontend/
 │   │   └── index.js                  ← Component exports
 │   │
 │   ├── contexts/                     ← Global Context Providers
-│   │   └── StreamingContext.jsx      ← Course generation context
+│   │   ├── StreamingContext.jsx      ← Course generation context
+│   │   └── ToastContext.jsx          ← Toast notification system
 │   │
 │   ├── modules/                      ← Feature-Based Architecture
 │   │   ├── learner/                  ← Learner Features
@@ -83,6 +86,12 @@ Frontend/
 │   │   └── admin/                    ← Admin Features
 │   │       ├── dashboard/            ← Admin dashboard
 │   │       │   ├── AdminDashboard.jsx
+│   │       │   └── index.js
+│   │       ├── users/                ← User management
+│   │       │   ├── pages/
+│   │       │   │   ├── UserManagementPage.jsx
+│   │       │   │   ├── UserDetailsPage.jsx
+│   │       │   │   └── EditUserPage.jsx
 │   │       │   └── index.js
 │   │       ├── contests/             ← Contest management
 │   │       │   ├── pages/
@@ -402,6 +411,9 @@ const { data, isLoading, error } = useBrowseContests(language);
 | `/admin-contests/generate` | GenerateContestPage | Admin | AI generation |
 | `/admin-contests/:id/edit` | EditContestPage | Admin | Edit contest |
 | `/admin-contests/:id/stats` | ContestStatsPage | Admin | View statistics |
+| `/admin/users` | UserManagementPage | Admin | Manage learner accounts |
+| `/admin/users/:learnerId` | UserDetailsPage | Admin | View user details |
+| `/admin/users/:learnerId/edit` | EditUserPage | Admin | Edit user account |
 
 ### **Route Protection**
 ```javascript

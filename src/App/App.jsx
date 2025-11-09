@@ -14,7 +14,10 @@ import {
   AdminContestsPage,
   GenerateContestPage,
   EditContestPage,
-  ContestStatsPage
+  ContestStatsPage,
+  UserManagementPage,
+  UserDetailsPage,
+  EditUserPage
 } from '../modules/admin';
 import { StreamingProvider } from '../contexts/StreamingContext';
 import { ChatBot } from '../components/ChatBot';
@@ -87,6 +90,11 @@ function App() {
         } />
         
         {/* Admin Routes */}
+        <Route path="/admin" element={
+          <ProtectedRoute role="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
         <Route path="/admin-dashboard" element={
           <ProtectedRoute role="admin">
             <AdminDashboard />
@@ -110,6 +118,23 @@ function App() {
         <Route path="/admin-contests/:contestId/stats" element={
           <ProtectedRoute role="admin">
             <ContestStatsPage />
+          </ProtectedRoute>
+        } />
+        
+        {/* Admin User Management Routes */}
+        <Route path="/admin/users" element={
+          <ProtectedRoute role="admin">
+            <UserManagementPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/users/:learnerId" element={
+          <ProtectedRoute role="admin">
+            <UserDetailsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/users/:learnerId/edit" element={
+          <ProtectedRoute role="admin">
+            <EditUserPage />
           </ProtectedRoute>
         } />
         
