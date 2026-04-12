@@ -6,6 +6,7 @@ import {
   fetchLessonDetails,
   generateExercises,
   completeLesson,
+  retryLesson,
 } from '../api/courses';
 
 /**
@@ -81,13 +82,25 @@ export const useGenerateExercises = () => {
 /**
  * Hook to complete a lesson
  */
+export const useRetryLesson = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: retryLesson,
+    onSuccess: (data, variables) => {
+      // Invalidate recommendations and knowledge graph so mastery updates are reflected
+      queryClient.invalidateQueries({ queryKey: ['recommendations', String(variables.courseId)] });
+      queryClient.invalidateQueries({ queryKey: ['knowledge-graph', String(variables.courseId)] });
+    },
+  });
+};
+
 export const useCompleteLesson = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: completeLesson,
     onSuccess: (data, variables) => {
-      // Invalidate related queries
+      // Invalidate lesson + course progress queries
       queryClient.invalidateQueries({
         queryKey: ['lesson', variables.courseId, variables.unitId, variables.lessonId],
       });
@@ -96,6 +109,13 @@ export const useCompleteLesson = () => {
       });
       queryClient.invalidateQueries({
         queryKey: ['courses'],
+      });
+      // Invalidate A* recommendations and knowledge graph so they reflect new mastery
+      queryClient.invalidateQueries({
+        queryKey: ['recommendations', String(variables.courseId)],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['knowledge-graph', String(variables.courseId)],
       });
     },
   });

@@ -3,3 +3,4 @@ export { Dashboard } from './dashboard';
 export { LearnerPreferences } from './preferences';
 export { CoursePage, LessonPage } from './courses';
 export { ContestsPage, ContestDetailPage, ContestLeaderboardPage } from './contests';
+export { default as KnowledgeMapPage } from './knowledge/KnowledgeMapPage';

@@ -1,13 +1,14 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Login, Signup } from '../modules/auth';
-import { 
-  Dashboard, 
-  CoursePage, 
+import {
+  Dashboard,
+  CoursePage,
   LessonPage,
   ContestsPage,
   ContestDetailPage,
-  ContestLeaderboardPage
+  ContestLeaderboardPage,
+  KnowledgeMapPage
 } from '../modules/learner';
 import { 
   AdminDashboard,
@@ -86,6 +87,11 @@ function App() {
         <Route path="/contests/:contestId/leaderboard" element={
           <ProtectedRoute role="learner">
             <ContestLeaderboardPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/knowledge-map/:courseId" element={
+          <ProtectedRoute role="learner">
+            <KnowledgeMapPage />
           </ProtectedRoute>
         } />
         

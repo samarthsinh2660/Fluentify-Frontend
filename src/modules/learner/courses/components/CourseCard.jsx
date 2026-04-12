@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { BookOpen, Flame, CheckCircle, Trash2, AlertTriangle } from 'lucide-react';
+import { BookOpen, Flame, CheckCircle, Trash2, AlertTriangle, Network } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { deleteCourse } from "../../../../api/courses";
 import { useCourses } from "../../../../hooks/useCourses";
 
@@ -10,6 +11,7 @@ import { useCourses } from "../../../../hooks/useCourses";
  * @param {Function} props.onClick - Click handler
  */
 const CourseCard = ({ course, onClick }) => {
+  const navigate = useNavigate();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   
@@ -147,12 +149,22 @@ const CourseCard = ({ course, onClick }) => {
         </div>
       </div>
       
-      <button
-        onClick={() => onClick(course)}
-        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        {progressPercentage > 0 ? 'Continue Learning' : 'Start Course'}
-      </button>
+      <div className="flex gap-2">
+        <button
+          onClick={() => onClick(course)}
+          className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+        >
+          {progressPercentage > 0 ? 'Continue Learning' : 'Start Course'}
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); navigate(`/knowledge-map/${course.id}`); }}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-green-200 text-green-700 hover:bg-green-50 transition-colors text-sm"
+          title="View Knowledge Map"
+        >
+          <Network className="w-4 h-4" />
+          Map
+        </button>
+      </div>
     </div>
   );
 };

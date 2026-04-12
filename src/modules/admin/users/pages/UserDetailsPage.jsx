@@ -1,21 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { 
-  ArrowLeft, 
-  User, 
-  Mail, 
-  Calendar, 
-  BookOpen, 
-  Trophy, 
+import {
+  ArrowLeft,
+  User,
+  Mail,
+  Calendar,
+  BookOpen,
+  Trophy,
   Flame,
-  Edit
+  Edit,
+  Brain,
 } from 'lucide-react';
 import { getLearnerById, getLearnerCourses } from '../../../../api/userManagement';
+import KnowledgeGraphViewer from '../../knowledge/components/KnowledgeGraphViewer';
 
 const UserDetailsPage = () => {
   const { learnerId } = useParams();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('courses');
+  const [selectedCourseId, setSelectedCourseId] = useState(null);
 
   // Fetch learner details
   const { data: learnerData, isLoading: learnerLoading, error: learnerError } = useQuery({
@@ -149,45 +153,105 @@ const UserDetailsPage = () => {
           </div>
         </div>
 
-        {/* Courses Section */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Enrolled Courses</h3>
-          
-          {coursesLoading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="mt-2 text-gray-600">Loading courses...</p>
-            </div>
-          ) : courses.length === 0 ? (
-            <div className="text-center py-8">
-              <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-              <p className="text-gray-600">No courses enrolled yet</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {courses.map((course) => (
-                <div key={course.id} className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-semibold text-gray-900">{course.language} Course</h4>
-                      <p className="text-sm text-gray-600">Expected Duration: {course.expected_duration}</p>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Started: {new Date(course.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm text-gray-600">
-                        <span className="font-semibold text-purple-600">{course.total_xp}</span> XP
-                      </div>
-                      <div className="text-sm text-gray-600 mt-1">
-                        <span className="font-semibold text-green-600">{course.lessons_completed}</span> lessons
-                      </div>
-                    </div>
+        {/* Tabs */}
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="flex border-b border-gray-200">
+            {[
+              { id: 'courses', label: 'Enrolled Courses', icon: <BookOpen className="w-4 h-4" /> },
+              { id: 'graph',   label: 'Knowledge Graph',  icon: <Brain className="w-4 h-4" /> },
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-5 py-3 text-sm font-medium transition-colors
+                  ${activeTab === tab.id
+                    ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="p-6">
+            {/* ── Courses tab ── */}
+            {activeTab === 'courses' && (
+              <>
+                {coursesLoading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto" />
+                    <p className="mt-2 text-gray-600">Loading courses...</p>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ) : courses.length === 0 ? (
+                  <div className="text-center py-8">
+                    <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                    <p className="text-gray-600">No courses enrolled yet</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {courses.map((course) => (
+                      <div key={course.id} className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-semibold text-gray-900">{course.language} Course</h4>
+                            <p className="text-sm text-gray-600">Expected Duration: {course.expected_duration}</p>
+                            <p className="text-sm text-gray-500 mt-1">
+                              Started: {new Date(course.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm text-gray-600">
+                              <span className="font-semibold text-purple-600">{course.total_xp}</span> XP
+                            </div>
+                            <div className="text-sm text-gray-600 mt-1">
+                              <span className="font-semibold text-green-600">{course.lessons_completed}</span> lessons
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* ── Knowledge Graph tab ── */}
+            {activeTab === 'graph' && (
+              <div className="space-y-4">
+                {/* Course selector */}
+                {coursesLoading ? (
+                  <div className="h-8 bg-gray-100 rounded animate-pulse w-48" />
+                ) : courses.length === 0 ? (
+                  <p className="text-gray-500 text-sm">No courses available.</p>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-gray-700">Select course:</label>
+                    <select
+                      value={selectedCourseId ?? courses[0].id}
+                      onChange={e => setSelectedCourseId(Number(e.target.value))}
+                      className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      {courses.map(c => (
+                        <option key={c.id} value={c.id}>
+                          {c.language} Course (ID {c.id})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {courses.length > 0 && (
+                  <KnowledgeGraphViewer
+                    key={`${selectedCourseId ?? courses[0]?.id}-${learnerId}`}
+                    courseId={selectedCourseId ?? courses[0]?.id}
+                    learnerId={Number(learnerId)}
+                  />
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>

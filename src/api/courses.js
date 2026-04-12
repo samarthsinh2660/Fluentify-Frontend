@@ -96,7 +96,21 @@ export const completeLesson = async ({ courseId, unitId, lessonId, score = 100, 
       body: JSON.stringify({ score, exercises }),
     }
   );
-  
+  return handleResponse(response);
+};
+
+/**
+ * Retry a completed lesson — updates concept mastery score only, no XP re-award
+ */
+export const retryLesson = async ({ courseId, unitId, lessonId, score = 100, exercises = [] }) => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/progress/courses/${courseId}/units/${unitId}/lessons/${lessonId}/retry`,
+    {
+      method: 'POST',
+      headers: getAuthHeader(),
+      body: JSON.stringify({ score, exercises }),
+    }
+  );
   return handleResponse(response);
 };
 
